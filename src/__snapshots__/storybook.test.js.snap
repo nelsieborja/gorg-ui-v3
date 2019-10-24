@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots UI|Button Default 1`] = `
+<button
+  onClick={[Function]}
+>
+  Simple Button
+</button>
+`;
