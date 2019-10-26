@@ -57,7 +57,7 @@ You might also like to checkout the [first](https://github.com/nelsieborja/gorg-
 
    The above works only during the build with Webpack, polyfill this to work with Jest by first installing Macro (for CRA v2+):
 
-   ```js
+   ```shell
    yarn add -D require-context.macro
    ```
 

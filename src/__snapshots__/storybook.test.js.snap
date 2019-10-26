@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Storyshots ThemeProvider Default 1`] = `"import ThemeProvider, { ThemeInterface } from 'ThemeProvider';"`;
+
 exports[`Storyshots UI|Button Default 1`] = `
 <button
   onClick={[Function]}
