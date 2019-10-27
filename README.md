@@ -1,8 +1,14 @@
-# Gorg UI v3 - TypeScript, Theming, Doc Update, + more...
+# 🦋 Gorg UI v3
 
 You might also like to checkout the [first](https://github.com/nelsieborja/gorg-ui) ever version of the project for prior updates.
 
-## Installation
+- [x] TypeScript
+- [x] Theming
+- [x] Styled System
+- [ ] Doc Update
+- [ ] +more ...
+
+## ⚙️Installation
 
 1. Create the application:
 
@@ -137,13 +143,15 @@ You might also like to checkout the [first](https://github.com/nelsieborja/gorg-
 
    `requireContext('../src/components', true, /\.stories\.js$/)` => `requireContext('../src/components', true, /\.stories\.tsx$/)`
 
+## 🐛Bug Fixes
+
 ### TypeScript Issue(s)
 
 > Could not find a declaration file for module '@storybook/addon-knobs/react'
 
 ```js
 // BEFORE:
-// import { withKnobs, object } from '@storybook/addon-knobs/react';
+import { withKnobs, object } from '@storybook/addon-knobs/react';
 
 // AFTER:
 import { withKnobs, object } from '@storybook/addon-knobs';
