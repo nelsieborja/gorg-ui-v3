@@ -3,13 +3,13 @@ import { ThemeProvider } from 'emotion-theming';
 import { Global, css } from '@emotion/core';
 import emotionNormalize from 'emotion-normalize';
 
-import ThemeType from './theme.interface';
+import THEME, { ThemeType } from 'theme';
 
 interface Props {
-  theme: ThemeType;
+  theme?: ThemeType;
 }
 
-const GorgUIThemeProvider: React.FC<Props> = ({ children, theme }) => (
+const GorgUIThemeProvider: React.FC<Props> = ({ children, theme = THEME }) => (
   <ThemeProvider theme={theme}>
     <Global
       styles={css`

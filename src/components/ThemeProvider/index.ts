@@ -1,5 +1,5 @@
 import ThemeProvider from './ThemeProvider';
-import ThemeType from './theme.interface';
+import { ThemeType } from '../../theme';
 
 export default ThemeProvider;
-export declare interface ThemeInterface extends ThemeType {}
+export type ThemeType = ThemeType;

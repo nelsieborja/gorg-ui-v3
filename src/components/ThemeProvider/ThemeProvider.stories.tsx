@@ -1,6 +1,5 @@
 import React from 'react';
 
-import THEME from './theme';
 import ThemeProvider from '.';
 
 export default {
@@ -8,5 +7,5 @@ export default {
   component: ThemeProvider
 };
 
-const importLine = "import ThemeProvider, { ThemeInterface } from 'ThemeProvider';";
-export const Default = () => <ThemeProvider theme={THEME}>{importLine}</ThemeProvider>;
+const importLine = "import ThemeProvider, { ThemeType } from 'ThemeProvider';";
+export const Default = () => <ThemeProvider>{importLine}</ThemeProvider>;
