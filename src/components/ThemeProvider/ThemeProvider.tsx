@@ -18,7 +18,7 @@ const GorgUIThemeProvider: React.FC<Props> = ({ children, theme = THEME }) => (
 
         html,
         body {
-          font-size: ${theme.fontSizes[3]}px;
+          font-size: 14px;
           font-family: ${theme.fonts.family};
         }
       `}

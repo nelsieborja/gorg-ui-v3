@@ -148,3 +148,22 @@ You might also like to checkout the [first](https://github.com/nelsieborja/gorg-
 // AFTER:
 import { withKnobs, object } from '@storybook/addon-knobs';
 ```
+
+### Styled System Issue(s)
+
+> Type '{ color?: ... }' is not assignable to type 'ButtonHTMLAttributes<HTMLButtonElement>'
+
+```js
+// FIX 1: Set styled component type to `any`:
+const Button: any = styled('button') < ButtonProps > ``;
+
+// Fix 2: Define custom prop `textColor` in place of `color`:
+const textColor = system({
+  textColor: {
+    property: 'color', // <-- CSS property
+    scale: 'colors' // <-- key reference in the `theme` object
+  }
+});
+```
+
+For Fix 2, make sure to do the same thing for prop `bg|backgroundColor` since this is also part of the built-in API `color`.

@@ -1,10 +1,8 @@
 import React from 'react';
 
-interface Props {
-  onClick?(event?: React.MouseEvent<HTMLButtonElement>): void;
-  variant?: 'default' | 'outline' | 'text';
-}
+import ButtonProps from './Button.interface';
+import ButtonStyled from './Button.styles';
 
-const Button: React.FC<Props> = props => <button {...props} />;
+const Button: React.FC<ButtonProps> = props => <ButtonStyled {...props} />;
 
 export default Button;
