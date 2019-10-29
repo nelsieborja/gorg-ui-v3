@@ -5,15 +5,15 @@ export default {
     lightBlue3: '#bfd5de',
 
     black1: '#4e4e4e',
-    black2: '#353535',
+    black2: '#333',
     black3: '#131313',
 
-    blue1: '#70d9ff',
-    blue2: '#02bbff',
-    blue3: '#009de8',
+    blue1: '#00a6fe',
+    blue2: '#0077bd',
+    blue3: '#005a9a',
 
     white: '#fff',
-    black: '#353535'
+    black: '#333'
   },
   fonts: {
     url: 'https://fonts.googleapis.com/css?family=Poppins&display=swap',
