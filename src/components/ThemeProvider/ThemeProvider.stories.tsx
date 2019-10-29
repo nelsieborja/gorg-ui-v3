@@ -7,5 +7,7 @@ export default {
   component: ThemeProvider
 };
 
-const importLine = "import ThemeProvider, { ThemeType } from 'ThemeProvider';";
-export const Default = () => <ThemeProvider>{importLine}</ThemeProvider>;
+export const basic = () => <ThemeProvider />;
+basic.story = {
+  name: 'Basic Usage'
+};

@@ -3,6 +3,7 @@ import { system, Config, ResponsiveValue } from 'styled-system';
 import { ThemeType } from 'theme';
 
 export interface TextColorProps {
+  /** Sets the text color, otherwise override the default one */
   textColor?: ResponsiveValue<keyof ThemeType['colors']>;
 }
 

@@ -3,15 +3,9 @@ import { compose, layout, space, typography, variant } from 'styled-system';
 import backgroundColor from 'styled-system/backgroundColor';
 import textColor from 'styled-system/textColor';
 
-import ButtonProps, { VariantEnum } from './Button.interface';
-
-// import { themeGet } from '@styled-system/theme-get';
-// font-size: ${themeGet('fontSize.3', '14px')};
+import ButtonProps from './Button.interface';
 
 const Button = styled('button')<ButtonProps>(
-  // props => ({
-  //   color: props.color
-  // }),
   {
     borderWidth: 1,
     borderColor: 'transparent',
@@ -54,8 +48,7 @@ const Button = styled('button')<ButtonProps>(
 );
 
 Button.defaultProps = {
-  p: 3,
-  variant: VariantEnum.default
+  p: 3
 };
 
 export default Button;

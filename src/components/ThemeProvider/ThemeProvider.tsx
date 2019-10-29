@@ -3,7 +3,7 @@ import { ThemeProvider } from 'emotion-theming';
 import { Global, css } from '@emotion/core';
 import emotionNormalize from 'emotion-normalize';
 
-import THEME, { ThemeType } from 'theme';
+import THEME, { ThemeType } from '../../theme';
 
 interface Props {
   theme?: ThemeType;

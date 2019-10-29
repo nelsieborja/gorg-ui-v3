@@ -2,20 +2,23 @@ import { LayoutProps, SpaceProps, TypographyProps, ResponsiveValue } from 'style
 import { BackgroundColorProps } from 'styled-system/backgroundColor';
 import { TextColorProps } from 'styled-system/textColor';
 
-export enum VariantEnum {
-  default = 'default',
-  primary = 'primary',
-  secondary = 'secondary'
-}
-export type VariantType = keyof typeof VariantEnum;
+export type VariantType = 'default' | 'primary' | 'secondary';
 
-type ButtonProps = BackgroundColorProps &
-  TextColorProps &
-  LayoutProps &
-  SpaceProps &
-  TypographyProps & {
-    variant?: ResponsiveValue<VariantType>;
-    onClick?(event?: React.MouseEvent<HTMLButtonElement>): void;
-  };
+interface ButtonProps
+  extends BackgroundColorProps,
+    TextColorProps,
+    LayoutProps,
+    SpaceProps,
+    TypographyProps {
+  /**
+   * Sets the base appearance of the component
+   * @default default
+   */
+  variant?: ResponsiveValue<VariantType>;
+  /**
+   * Handles the click event of the component
+   */
+  onClick?(event?: React.MouseEvent<HTMLButtonElement>): void;
+}
 
 export default ButtonProps;

@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@storybook/addon-knobs": "^5.2.5",
     "@types/jest": "24.0.19",
     "@types/node": "12.11.6",
     "@types/react": "16.9.9",
@@ -40,12 +39,18 @@
     ]
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "^5.2.5",
     "@storybook/addon-actions": "^5.2.5",
+    "@storybook/addon-centered": "^5.2.5",
+    "@storybook/addon-docs": "^5.2.5",
+    "@storybook/addon-knobs": "^5.2.5",
     "@storybook/addon-links": "^5.2.5",
     "@storybook/addon-storyshots": "^5.2.5",
     "@storybook/addons": "^5.2.5",
     "@storybook/react": "^5.2.5",
     "babel-loader": "^8.0.6",
+    "react-docgen-typescript-loader": "^3.3.0",
+    "react-is": "^16.11.0",
     "react-test-renderer": "^16.11.0",
     "require-context.macro": "^1.2.2"
   }
