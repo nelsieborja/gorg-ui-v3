@@ -5,7 +5,7 @@ You might also like to checkout the [first](https://github.com/nelsieborja/gorg-
 - [x] TypeScript
 - [x] Theming
 - [x] Styled System
-- [ ] Doc Update
+- [x] Doc Update
 - [ ] +more ...
 
 ## ⚙️Installation
