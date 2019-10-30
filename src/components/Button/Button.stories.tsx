@@ -11,28 +11,50 @@ export default {
 
 export const buttons = () => (
   <>
-    <Button onClick={action('Clicked Default')}>{text('Default', 'Default')}</Button>
-
-    <Button variant="primary" onClick={action('Clicked Primary')}>
+    <Button m={1} onClick={action('Clicked Default')}>
+      {text('Default', 'Default')}
+    </Button>
+    <Button variant="primary" m={1} onClick={action('Clicked Primary')}>
       {text('Primary', 'Primary')}
     </Button>
-
-    <Button variant="secondary" onClick={action('Clicked Secondary')}>
+    <Button variant="secondary" m={1} onClick={action('Clicked Secondary')}>
       {text('Secondary', 'Secondary')}
+    </Button>
+
+    <br />
+
+    <Button m={1} onClick={action('Clicked Default')}>
+      Default
+    </Button>
+    <Button variant="primary" shape="round" m={1} onClick={action('Clicked Round')}>
+      Round
+    </Button>
+    <Button variant="secondary" shape="circle" m={1} onClick={action('Clicked Circle')}>
+      Circle
     </Button>
   </>
 );
 
 export const variant = () => (
   <>
-    <Button onClick={action('Clicked Default')}>{text('Default', 'Default')}</Button>
-
-    <Button variant="primary" onClick={action('Clicked Primary')}>
-      {text('Primary', 'Primary')}
+    <Button m={1}>Default</Button>
+    <Button variant="primary" m={1}>
+      Primary
     </Button>
+    <Button variant="secondary" m={1}>
+      Secondary
+    </Button>
+  </>
+);
 
-    <Button variant="secondary" onClick={action('Clicked Secondary')}>
-      {text('Secondary', 'Secondary')}
+export const shape = () => (
+  <>
+    <Button m={1}>Default</Button>
+    <Button shape="round" m={1}>
+      Round
+    </Button>
+    <Button shape="circle" m={1}>
+      Circle
     </Button>
   </>
 );

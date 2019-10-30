@@ -21,6 +21,13 @@ const GorgUIThemeProvider: React.FC<Props> = ({ children, theme = THEME }) => (
           font-size: 14px;
           font-family: ${theme.fonts.family};
         }
+
+        button,
+        input,
+        select,
+        textarea {
+          outline: none;
+        }
       `}
     />
     {children}
