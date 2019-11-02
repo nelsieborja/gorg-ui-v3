@@ -1,14 +1,15 @@
 # 🦋 Gorg UI v3
 
-You might also like to checkout the [first](https://github.com/nelsieborja/gorg-ui) ever version of the project for prior updates.
+[![CircleCI](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master.svg?style=svg)](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master)
+
+This repo contains the base architecture of the project, while further development was moved to a private monorepo (for now). You might also like to checkout the [first](https://github.com/nelsieborja/gorg-ui) ever version of the project for prior updates.
 
 - [x] TypeScript
 - [x] Theming
 - [x] Styled System
 - [x] Doc Update
-- [ ] +more ...
 
-## ⚙️Installation
+## ⚙️ Installation
 
 1. Create the application:
 
@@ -47,6 +48,12 @@ You might also like to checkout the [first](https://github.com/nelsieborja/gorg-
    ```js
    import initStoryshots from '@storybook/addon-storyshots';
    initStoryshots();
+   ```
+
+   For TypeScript, install corresponding type:
+
+   ```shell
+   yarn add -D @types/storybook__addon-storyshots
    ```
 
 5. Configure the App for Jest (Component Story Format (CSF) version):
@@ -113,6 +120,10 @@ You might also like to checkout the [first](https://github.com/nelsieborja/gorg-
    export const Default = () => <Button>{text('children', 'Simple Button')}</Button>;
    ```
 
+   ### More AddOns
+
+   `@storybook/addon-a11y`
+
 7. Finishing up TypeScript Setup
 
    Add [custom Webpack config](https://storybook.js.org/docs/configurations/custom-webpack-config/#full-control-mode--default) by creating `.storybook/webpack.config.js` file with the following in it:
@@ -143,7 +154,36 @@ You might also like to checkout the [first](https://github.com/nelsieborja/gorg-
 
    `requireContext('../src/components', true, /\.stories\.js$/)` => `requireContext('../src/components', true, /\.stories\.tsx$/)`
 
-## 🐛Bug Fixes
+## 📄 `DocsPage` Setup
+
+1. Install the dependency:
+   ```shell
+   yarn add -D @storybook/addon-docs
+   ```
+2. Create the file `.storybook/presets.js`, with the following in it:
+   ```js
+   module.exports = ['@storybook/addon-docs/react/preset'];
+   ```
+3. Install `react-docgen-typescript-loader`:
+   ```shell
+   yarn add -D react-docgen-typescript-loader
+   ```
+   May need to specify the `tsconfig` for the loader in case [props are not displaying](https://github.com/strothj/react-docgen-typescript-loader/issues/10#issuecomment-425688601):
+   ```js
+   config.module.rules.push({
+     ...
+     use: [
+       {
+         loader: require.resolve('react-docgen-typescript-loader'),
+         options: {
+           tsconfigPath: path.resolve(__dirname, '../tsconfig.json')
+         }
+       }
+     ]
+   });
+   ```
+
+## 🐛 Bug Fixes
 
 ### TypeScript Issue(s)
 
