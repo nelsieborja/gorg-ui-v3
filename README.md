@@ -1,6 +1,4 @@
-# 🦋 Gorg UI v3
-
-[![CircleCI](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master.svg?style=svg)](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master)
+# 🦋 Gorg UI v3 [![CircleCI](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master.svg?style=svg)](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master)
 
 This repo contains the base architecture of the project, while further development was moved to a private monorepo (for now). You might also like to checkout the [first](https://github.com/nelsieborja/gorg-ui) ever version of the project for prior updates.
 
@@ -114,7 +112,7 @@ This repo contains the base architecture of the project, while further developme
    export default {
      title: 'Button',
      component: Button,
-     decorators: [withKnobs]
+     decorators: [withKnobs],
    };
 
    export const Default = () => <Button>{text('children', 'Simple Button')}</Button>;
@@ -134,8 +132,8 @@ This repo contains the base architecture of the project, while further developme
        test: /\.(ts|tsx)$/,
        loader: require.resolve('babel-loader'),
        options: {
-         presets: [['react-app', { flow: false, typescript: true }]]
-       }
+         presets: [['react-app', { flow: false, typescript: true }]],
+       },
      });
      config.resolve.extensions.push('.ts', '.tsx');
      return config;
@@ -209,8 +207,8 @@ const Button: any = styled('button') < ButtonProps > ``;
 const textColor = system({
   textColor: {
     property: 'color', // <-- CSS property
-    scale: 'colors' // <-- key reference in the `theme` object
-  }
+    scale: 'colors', // <-- key reference in the `theme` object
+  },
 });
 ```
 
