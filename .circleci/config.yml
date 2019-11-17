@@ -1,13 +1,25 @@
-version: 2.1 # use CircleCI 2.1
+version: 2 # use CircleCI 2
 jobs: # a collection of steps
   build: # runs not using Workflows must have a `build` job as entry point
     working_directory: ~/repo # directory where steps will run
 
     docker: # run the steps with Docker
-      - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
+      - image: circleci/node:jessie-browsers # ...with this image as the primary container; this is where all `steps` will run
 
     steps: # a collection of executable commands
       - checkout # special step to check out source code to working directory
+
+      # Installing and Running Selenium to Automate Browser Testing
+      - run: mkdir test-reports
+      - run:
+          name: Download Selenium
+          command: |
+            curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
+      - run:
+          name: Start Selenium
+          command: |
+            java -jar selenium-server-standalone-3.5.3.jar -log test-reports/selenium.log
+          background: true
 
       - restore_cache: # special step to restore the dependency cache
           name: Restore Yarn Package Cache
@@ -18,7 +30,7 @@ jobs: # a collection of steps
 
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile
+          command: yarn install --frozen-lockfile --ignore-engines
 
       - save_cache: # special step to save the dependency cache
           name: Save Yarn Package Cache
@@ -33,3 +45,9 @@ jobs: # a collection of steps
       - run: ## Run Build
           name: Build Gorg UI
           command: yarn run ci:build
+
+      - store_artifacts: # special step to collect and upload the artifacts to S3 for storage
+          path: test-reports/
+          destination: tr1
+      - store_test_results:
+          path: test-reports/
