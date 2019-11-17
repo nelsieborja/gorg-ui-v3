@@ -14,11 +14,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:coverage": "yarn run test --coverage",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
-    "ci:test": "start-server-and-test storybook http://localhost:9009 test:coverage",
+    "ci:test": "start-test 'start-storybook -p 9009 -s public' 9009 'react-scripts test --coverage'",
     "ci:build": "yarn run build-storybook"
   },
   "eslintConfig": {
