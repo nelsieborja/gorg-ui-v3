@@ -11,8 +11,18 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
       - run: yarn install
+
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: yarn test
+
+      ## Run Test + Coverage
+      - run:
+          name: Run Test + Coverage
+          command: yarn run ci:test
+
+      ## Run Build
+      - run:
+          name: Build Gorg UI
+          command: yarn run ci:build
