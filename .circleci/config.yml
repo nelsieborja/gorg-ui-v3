@@ -1,15 +1,69 @@
 version: 2 # use CircleCI 2
+
+aliases:
+  - &defaults
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:latest-browsers
+
 jobs: # a collection of steps
   build: # runs not using Workflows must have a `build` job as entry point
-    working_directory: ~/repo # directory where steps will run
+    <<: *defaults
 
-    docker: # run the steps with Docker
-      - image: circleci/node:jessie-browsers # ...with this image as the primary container; this is where all `steps` will run
+    steps:
+      - checkout
 
-    steps: # a collection of executable commands
-      - checkout # special step to check out source code to working directory
+      # Download and cache dependencies
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          keys:
+            # key template
+            # embeds the current branch name using {{ .Branch }}
+            # embeds "yarn.lock" into the key templace via {{ checksum "yarn.lock" }}
+            - yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-
 
-      # Installing and Running Selenium to Automate Browser Testing
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile --ignore-engines
+
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn # cache path
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+
+  build-app:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build Gorg UI
+          command: yarn run ci:build
+      # upload the build folder as an artifact
+      - store_artifacts:
+          path: public/
+          destination: public
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+
+  # Installing and Running Selenium to Automate Browser Testing
+  storyshots-puppeteer:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
       - run: mkdir test-reports
       - run:
           name: Download Selenium
@@ -20,34 +74,59 @@ jobs: # a collection of steps
           command: |
             java -jar selenium-server-standalone-3.5.3.jar -log test-reports/selenium.log
           background: true
-
-      - restore_cache: # special step to restore the dependency cache
-          name: Restore Yarn Package Cache
-          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
-          keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
-            - yarn-packages-
-
-      - run:
-          name: Install Dependencies
-          command: yarn install --frozen-lockfile --ignore-engines
-
-      - save_cache: # special step to save the dependency cache
-          name: Save Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
+      - persist_to_workspace:
+          root: .
           paths:
-            - ~/.cache/yarn
+            - test-reports
 
-      - run: ## Run Test + Coverage
-          name: Run Test + Coverage
-          command: yarn run ci:test
-
-      - run: ## Run Build
-          name: Build Gorg UI
-          command: yarn run ci:build
-
-      - store_artifacts: # special step to collect and upload the artifacts to S3 for storage
+  snapshots:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - store_artifacts:
           path: test-reports/
-          destination: tr1
+          destination: test-reports
       - store_test_results:
           path: test-reports/
+      - persist_to_workspace:
+          root: .
+          paths:
+            - test-reports
+
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run Test + Coverage
+          command: yarn run ci:test
+      - store_artifacts:
+          path: coverage/
+          destination: coverage
+      - store_test_results:
+          path: coverage/
+      - store_test_results:
+          path: src/__image_snapshots__/
+      - persist_to_workspace:
+          root: .
+          paths:
+            - coverage
+
+workflows:
+  test:
+    jobs:
+      - build
+      - storyshots-puppeteer:
+          requires:
+            - build
+      - build-app:
+          requires:
+            - build
+      - snapshots:
+          requires:
+            - build
+            - storyshots-puppeteer
