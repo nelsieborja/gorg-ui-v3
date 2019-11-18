@@ -1,10 +1,9 @@
-version: 2 # use CircleCI 2
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:latest-browsers
 
-aliases:
-  - &defaults
-    working_directory: ~/repo
-    docker:
-      - image: circleci/node:latest-browsers
+version: 2.1 # use CircleCI 2.1
 
 jobs: # a collection of steps
   build: # runs not using Workflows must have a `build` job as entry point
@@ -55,7 +54,7 @@ jobs: # a collection of steps
       - persist_to_workspace:
           root: .
           paths:
-            - build
+            - public
 
   # Installing and Running Selenium to Automate Browser Testing
   storyshots-puppeteer:
@@ -115,12 +114,13 @@ jobs: # a collection of steps
           root: .
           paths:
             - coverage
+            - test-reports
 
 workflows:
   test:
     jobs:
       - build
-      - storyshots-puppeteer:
+      - test:
           requires:
             - build
       - build-app:
@@ -128,5 +128,4 @@ workflows:
             - build
       - snapshots:
           requires:
-            - build
-            - storyshots-puppeteer
+            - test
