@@ -65,6 +65,8 @@ jobs:
       - run:
           name: Run Test + Coverage
           command: yarn run ci:test
+      - store_test_results:
+          path: src/__snapshots__/
       - persist_to_workspace:
           root: .
           paths:
@@ -88,6 +90,8 @@ jobs:
       #     command: |
       #       java -jar selenium-server-standalone-3.5.3.jar -log test-reports/selenium.log
       #     background: true
+      - store_test_results:
+          path: src/__image_snapshots__/
       - persist_to_workspace:
           root: .
           paths:
@@ -105,10 +109,6 @@ jobs:
           destination: test-reports
       - store_test_results:
           path: test-reports/
-      - store_test_results:
-          path: src/__snapshots__/
-      # - store_test_results:
-      #     path: src/__image_snapshots__/
 
   coverage:
     <<: *defaults
@@ -139,16 +139,15 @@ workflows:
       - snapshots:
           requires:
             - test
-
-  puppeteer_test:
-    jobs:
-      - dependencies
-      - storyshots-puppeteer:
-          requires:
-            - dependencies
-      - coverage:
-          requires:
-            - storyshots-puppeteer
-      - snapshots:
-          requires:
-            - storyshots-puppeteer
+  # puppeteer_test:
+  #   jobs:
+  #     - dependencies
+  #     - storyshots-puppeteer:
+  #         requires:
+  #           - dependencies
+  #     - coverage:
+  #         requires:
+  #           - storyshots-puppeteer
+  #     - snapshots:
+  #         requires:
+  #           - storyshots-puppeteer
