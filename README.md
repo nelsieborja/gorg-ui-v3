@@ -1,11 +1,13 @@
-# 🦋 Gorg UI v3 [![CircleCI](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master.svg?style=svg)](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master)
+# 🦋 Gorg UI v3 [![CircleCI](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master.svg?style=svg)](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master) [![Netlify Status](https://api.netlify.com/api/v1/badges/d088e964-3c0e-41dc-acd3-44730b45593e/deploy-status)](https://app.netlify.com/sites/gorg-ui-v3/deploys)
 
 This repo contains the base architecture of the project, while further development was moved to a private monorepo (for now). You might also like to checkout the [first](https://github.com/nelsieborja/gorg-ui) ever version of the project for prior updates.
 
 - [x] TypeScript
 - [x] Theming
 - [x] Styled System
-- [x] Doc Update
+- [x] [Doc Update](https://github.com/nelsieborja/gorg-ui-v3#-docspage-setup)
+- [x] ~~Structural Testing~~ [Automated Visual Testing](https://github.com/nelsieborja/gorg-ui-v3#-automated-visual-testing)
+- [x] [CircleCI Setup](https://github.com/nelsieborja/gorg-ui-v3#circleci-setup)
 
 ## ⚙️ Installation
 
@@ -152,6 +154,41 @@ This repo contains the base architecture of the project, while further developme
 
    `requireContext('../src/components', true, /\.stories\.js$/)` => `requireContext('../src/components', true, /\.stories\.tsx$/)`
 
+### 🐛 Bug Fixes
+
+#### TypeScript Issue(s)
+
+> Could not find a declaration file for module '@storybook/addon-knobs/react'
+
+```js
+// BEFORE:
+import { withKnobs, object } from '@storybook/addon-knobs/react';
+
+// AFTER:
+import { withKnobs, object } from '@storybook/addon-knobs';
+```
+
+#### Styled System Issue(s)
+
+> Type '{ color?: ... }' is not assignable to type 'ButtonHTMLAttributes<HTMLButtonElement>'
+
+```js
+// FIX 1: Set styled component type to `any`:
+const Button: any = styled('button') < ButtonProps > ``;
+
+// Fix 2: Define custom prop `textColor` in place of `color`:
+const textColor = system({
+  textColor: {
+    property: 'color', // <-- CSS property
+    scale: 'colors', // <-- key reference in the `theme` object
+  },
+});
+```
+
+For Fix 2, make sure to do the same thing for prop `bg|backgroundColor` since this is also part of the built-in API `color`.
+
+---
+
 ## 📄 `DocsPage` Setup
 
 1. Install the dependency:
@@ -181,35 +218,95 @@ This repo contains the base architecture of the project, while further developme
    });
    ```
 
-## 🐛 Bug Fixes
+---
 
-### TypeScript Issue(s)
+## 📸 [Automated Visual Testing](https://medium.com/better-programming/using-storybook-as-a-powerful-visual-testing-platform-3b71db953b4b)
 
-> Could not find a declaration file for module '@storybook/addon-knobs/react'
+Storybook tests UI visually via an add-on called `storyshot-puppeteer`:
 
-```js
-// BEFORE:
-import { withKnobs, object } from '@storybook/addon-knobs/react';
+> Same as `storyshots`, it works by comparing screenshots – only this time it takes screenshots of the browser and not code
 
-// AFTER:
-import { withKnobs, object } from '@storybook/addon-knobs';
+### Quick Setup
+
+Install `storyshot-puppeteer` with:
+
+```shell
+yarn add D @storybook/addon-storyshots-puppeteer
 ```
 
-### Styled System Issue(s)
-
-> Type '{ color?: ... }' is not assignable to type 'ButtonHTMLAttributes<HTMLButtonElement>'
+Update the test file `storybook.test.ts` to override the test comparison with `imageSnapshot` from the `puppeteer` add-on:
 
 ```js
-// FIX 1: Set styled component type to `any`:
-const Button: any = styled('button') < ButtonProps > ``;
+// storybook.test.ts
+import initStoryshots from '@storybook/addon-storyshots';
+import { imageSnapshot } from '@storybook/addon-storyshots-puppeteer';
 
-// Fix 2: Define custom prop `textColor` in place of `color`:
-const textColor = system({
-  textColor: {
-    property: 'color', // <-- CSS property
-    scale: 'colors', // <-- key reference in the `theme` object
-  },
+initStoryshots({
+  test: imageSnapshot({ storybookUrl: 'http://localhost:9009/' }),
 });
 ```
 
-For Fix 2, make sure to do the same thing for prop `bg|backgroundColor` since this is also part of the built-in API `color`.
+Note that the tests now depend on having an instance of Storybook running, so make sure Storybook server is up and running before running the tests.
+
+### Running on CI
+
+Running two terminals (one for Storybook, another one for Testing) at the same time on CI environment is made possible by `start-server-and-test`:
+
+```shell
+yarn add start-server-and-test
+```
+
+Then add the below corresponding script in `package.json` file:
+
+```json
+"scripts": {
+  "test": "react-scripts test --coverage",
+  "storybook": "start-storybook -p 9009 -s public",
+  "ci:test": "start-test storybook 9009 test",
+}
+```
+
+---
+
+## CircleCI Setup
+
+### [Collecting Jest Data](https://www.viget.com/articles/using-junit-on-circleci-2-0-with-jest-and-eslint/) via [Junit](https://github.com/jest-community/jest-junit) (CRA version)
+
+Install `jest-junit` with:
+
+```shell
+yarn add -D jest-junit
+```
+
+Tell Junit to save the report output to a directory of your choice (`test-reports` in my case):
+
+```json
+// package.json
+
+"jest-junit": {
+  "outputDirectory": "test-reports"
+}
+```
+
+Sample command line:
+
+```shell
+react-scripts test --coverage --ci --runInBand --reporters=default --reporters=jest-junit
+```
+
+- `--runInBand` - force Jest to use only the virtualized build environment within the virtual machine
+- `--ci` - improves the behavior of certain Jest operations like snapshot testing during continuous integration
+- `--reporters=default --reporters=jest-junit` - tell Jest to generate a Junit report
+
+More CircleCI required config:
+
+```yml
+## .circleci/config.yml
+
+- store_artifacts:
+    path: test-reports/ # upload the test result folder as an artifact
+- store_test_results:
+    path: test-reports/ # display test result in build summary section
+```
+
+### [Using Yarn in CircleCI](https://circleci.com/docs/2.0/yarn/)

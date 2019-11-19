@@ -105,7 +105,9 @@ jobs:
       - store_test_results:
           path: test-reports/
       - store_test_results:
-          path: src/__image_snapshots__/
+          path: src/__snapshots__/
+      # - store_test_results:
+      #     path: src/__image_snapshots__/
 
   coverage:
     <<: *defaults
