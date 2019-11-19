@@ -71,7 +71,6 @@ jobs:
             - coverage
             - test-reports
 
-  # Installing and Running Selenium to Automate Browser Testing
   storyshots-puppeteer:
     <<: *defaults
     steps:
@@ -79,18 +78,20 @@ jobs:
       - attach_workspace:
           at: .
       - run: mkdir test-reports
-      - run:
-          name: Download Selenium
-          command: |
-            curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
-      - run:
-          name: Start Selenium
-          command: |
-            java -jar selenium-server-standalone-3.5.3.jar -log test-reports/selenium.log
-          background: true
+      - run: yarn run ci:test:puppeteer
+      # - run:
+      #     name: Download Selenium
+      #     command: |
+      #       curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
+      # - run:
+      #     name: Start Selenium
+      #     command: |
+      #       java -jar selenium-server-standalone-3.5.3.jar -log test-reports/selenium.log
+      #     background: true
       - persist_to_workspace:
           root: .
           paths:
+            - coverage
             - test-reports
 
   snapshots:
@@ -138,3 +139,16 @@ workflows:
       - snapshots:
           requires:
             - test
+
+  puppeteer_test:
+    jobs:
+      - dependencies
+      - storyshots-puppeteer:
+          requires:
+            - dependencies
+      - coverage:
+          requires:
+            - storyshots-puppeteer
+      - snapshots:
+          requires:
+            - storyshots-puppeteer
