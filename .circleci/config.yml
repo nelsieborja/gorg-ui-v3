@@ -3,15 +3,13 @@ defaults: &defaults
   docker:
     - image: circleci/node:latest-browsers
 
-version: 2.1 # use CircleCI 2.1
+version: 2 # use CircleCI 2
 
-jobs: # a collection of steps
-  build: # runs not using Workflows must have a `build` job as entry point
+jobs:
+  dependencies: # runs not using Workflows must have a `build` job as entry point
     <<: *defaults
-
     steps:
       - checkout
-
       # Download and cache dependencies
       - restore_cache:
           name: Restore Yarn Package Cache
@@ -38,7 +36,7 @@ jobs: # a collection of steps
           paths:
             - node_modules
 
-  build-app:
+  build: # runs not using Workflows must have a `build` job as entry point
     <<: *defaults
     steps:
       - checkout
@@ -51,10 +49,27 @@ jobs: # a collection of steps
       - store_artifacts:
           path: public/
           destination: public
+
       - persist_to_workspace:
           root: .
           paths:
             - public
+
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: mkdir test-reports
+      - run:
+          name: Run Test + Coverage
+          command: yarn run ci:test
+      - persist_to_workspace:
+          root: .
+          paths:
+            - coverage
+            - test-reports
 
   # Installing and Running Selenium to Automate Browser Testing
   storyshots-puppeteer:
@@ -89,43 +104,35 @@ jobs: # a collection of steps
           destination: test-reports
       - store_test_results:
           path: test-reports/
-      - persist_to_workspace:
-          root: .
-          paths:
-            - test-reports
+      - store_test_results:
+          path: src/__image_snapshots__/
 
-  test:
+  coverage:
     <<: *defaults
     steps:
       - checkout
       - attach_workspace:
           at: .
-      - run:
-          name: Run Test + Coverage
-          command: yarn run ci:test
       - store_artifacts:
           path: coverage/
           destination: coverage
       - store_test_results:
           path: coverage/
-      - store_test_results:
-          path: src/__image_snapshots__/
-      - persist_to_workspace:
-          root: .
-          paths:
-            - coverage
-            - test-reports
 
 workflows:
-  test:
+  version: 2
+  build_and_test:
     jobs:
-      - build
+      - dependencies
       - test:
           requires:
-            - build
-      - build-app:
+            - dependencies
+      - build:
           requires:
-            - build
+            - test
+      - coverage:
+          requires:
+            - test
       - snapshots:
           requires:
             - test
