@@ -1,4 +1,4 @@
-# 🦋 Gorg UI v3 [![CircleCI](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master.svg?style=svg)](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master) [![Netlify Status](https://api.netlify.com/api/v1/badges/d088e964-3c0e-41dc-acd3-44730b45593e/deploy-status)](https://app.netlify.com/sites/gorg-ui-v3/deploys)
+# 🦋 Gorg UI v3 [![CircleCI](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master.svg?style=svg)](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master) [![codecov](https://codecov.io/gh/nelsieborja/gorg-ui-v3/branch/master/graph/badge.svg)](https://codecov.io/gh/nelsieborja/gorg-ui-v3) [![Netlify Status](https://api.netlify.com/api/v1/badges/d088e964-3c0e-41dc-acd3-44730b45593e/deploy-status)](https://app.netlify.com/sites/gorg-ui-v3/deploys)
 
 This repo contains the base architecture of the project, while further development was moved to a private monorepo (for now). You might also like to checkout the [first](https://github.com/nelsieborja/gorg-ui) ever version of the project for prior updates.
 
