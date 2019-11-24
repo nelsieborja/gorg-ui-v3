@@ -10,8 +10,8 @@ export interface TextColorProps {
 const config: Config = {
   textColor: {
     property: 'color',
-    scale: 'colors'
-  }
+    scale: 'colors',
+  },
 };
 
 const textColor = system(config);

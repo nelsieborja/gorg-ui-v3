@@ -1,0 +1,53 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true,
+    "node": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    // Avoid runtime error
+    "project": "./tsconfig.json"
+  },
+  "extends": [
+    // ESLint rules, including ECMAScript 6+ and React
+    "airbnb",
+    // Enable the linting rules for React hooks
+    "airbnb/hooks",
+    // Make all eslint core rules compatible with TypeScript
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    // Some highly valuable rules simply require type-checking in order to be implemented correctly
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    // Disable above code formatting related rules
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "plugins": ["@typescript-eslint"],
+  "settings": {
+    // Make CRA absolure import works with ESLint
+    "import/resolver": {
+      "node": {
+        "paths": ["src"],
+        "extensions": [".js", ".ts", ".tsx"]
+      }
+    }
+  },
+
+  "rules": {
+    // [FIX] JSX not allowed in files with extension '.tsx'
+    // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [".ts", ".tsx"]
+      }
+    ],
+    "import/no-extraneous-dependencies": 0,
+    "react/jsx-props-no-spreading": 0,
+    // [FIX] 'children' is missing in props validation
+    "react/prop-types": 0
+  }
+}

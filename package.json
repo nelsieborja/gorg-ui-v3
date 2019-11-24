@@ -19,7 +19,8 @@
     "build-storybook": "build-storybook -s public",
     "ci:test:puppeteer": "start-test 'start-storybook -p 9009 -s public' 9009 'react-scripts test --coverage --ci --runInBand --reporters=default --reporters=jest-junit'",
     "ci:test": "yarn run test --coverage --ci --runInBand --reporters=default --reporters=jest-junit",
-    "ci:build": "yarn run build-storybook"
+    "ci:build": "yarn run build-storybook",
+    "lint": "eslint --ext=js,ts,tsx src"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -57,7 +58,18 @@
     "@types/storybook__addon-storyshots": "^5.1.1",
     "@types/storybook__addon-storyshots-puppeteer": "^5.1.0",
     "@types/styled-system": "^5.1.3",
+    "@typescript-eslint/eslint-plugin": "^2.8.0",
+    "@typescript-eslint/parser": "^2.8.0",
     "babel-loader": "^8.0.6",
+    "eslint": "6.1.0",
+    "eslint-config-airbnb": "18.0.1",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-react-app": "^5.0.2",
+    "eslint-plugin-flowtype": "^4.4.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
     "jest-junit": "^9.0.0",
     "react-docgen-typescript-loader": "^3.4.0",
     "react-is": "^16.12.0",

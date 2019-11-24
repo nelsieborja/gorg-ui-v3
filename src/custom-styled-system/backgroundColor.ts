@@ -12,8 +12,8 @@ export interface BackgroundColorProps {
 const config: Config = {
   backgroundColor: {
     property: 'backgroundColor',
-    scale: 'colors'
-  }
+    scale: 'colors',
+  },
 };
 config.bg = config.backgroundColor;
 

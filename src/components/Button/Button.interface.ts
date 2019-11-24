@@ -1,6 +1,6 @@
 import { LayoutProps, SpaceProps, TypographyProps, ResponsiveValue } from 'styled-system';
-import { BackgroundColorProps } from 'styled-system/backgroundColor';
-import { TextColorProps } from 'styled-system/textColor';
+import { BackgroundColorProps } from 'custom-styled-system/backgroundColor';
+import { TextColorProps } from 'custom-styled-system/textColor';
 
 export type VariantType = 'default' | 'primary' | 'secondary';
 export type ShapeType = 'default' | 'round' | 'circle';

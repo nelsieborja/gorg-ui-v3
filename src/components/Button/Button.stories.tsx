@@ -1,15 +1,16 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
 import { text } from '@storybook/addon-knobs';
+import { StoriesFC } from '../../../.storybook/types';
 
 import Button from '.';
 
 export default {
   title: 'UI|Button',
-  component: Button
+  component: Button,
 };
 
-export const buttons = () => (
+export const buttons: StoriesFC = () => (
   <>
     <Button m={1} onClick={action('Clicked Default')}>
       {text('Default', 'Default')}
@@ -35,7 +36,7 @@ export const buttons = () => (
   </>
 );
 
-export const variant = () => (
+export const variant: StoriesFC = () => (
   <>
     <Button m={1}>Default</Button>
     <Button variant="primary" m={1}>
@@ -47,7 +48,7 @@ export const variant = () => (
   </>
 );
 
-export const shape = () => (
+export const shape: StoriesFC = () => (
   <>
     <Button m={1}>Default</Button>
     <Button shape="round" m={1}>
@@ -59,7 +60,7 @@ export const shape = () => (
   </>
 );
 
-export const responsive = () => (
+export const responsive: StoriesFC = () => (
   <Button variant={['default', 'primary', 'secondary']} onClick={action('onClick')}>
     Resize viewport to see variant change in action
   </Button>
