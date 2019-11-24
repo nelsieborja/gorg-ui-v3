@@ -8,6 +8,7 @@ This repo contains the base architecture of the project, while further developme
 - [x] [Doc Update](https://github.com/nelsieborja/gorg-ui-v3#-docspage-setup)
 - [x] ~~Structural Testing~~ [Automated Visual Testing](https://github.com/nelsieborja/gorg-ui-v3#-automated-visual-testing)
 - [x] [CircleCI Setup](https://github.com/nelsieborja/gorg-ui-v3#circleci-setup)
+- [x] [TypeScript ESLint Setup](https://github.com/nelsieborja/gorg-ui-v3#typescript-eslint-setup)
 
 ## ⚙️ Installation
 
@@ -310,3 +311,9 @@ More CircleCI required config:
 ```
 
 ### [Using Yarn in CircleCI](https://circleci.com/docs/2.0/yarn/)
+
+---
+
+## TypeScript ESLint Setup
+
+🍔TODO
