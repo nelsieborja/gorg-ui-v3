@@ -15,46 +15,41 @@ This repo contains the base architecture of the project, while further developme
 1. Create the application:
 
    ```shell
-   npx create-react-app gorg-ui-v3 --typescript
+   $ npx create-react-app gorg-ui-v3 --typescript
    ```
 
 2. Add Storybook:
 
    ```shell
-   cd gorg-ui-v3
-   npx -p @storybook/cli sb init
+   $ cd gorg-ui-v3 && npx -p @storybook/cli sb init
    ```
 
 3. Quickly check that all environments are working properly:
 
    ```shell
    # Run the test runner (Jest) in a terminal:
-   yarn test
+   $ yarn test
 
    # Start the component explorer on port 9009:
-   yarn run storybook
+   $ yarn run storybook
 
    # Run the frontend app proper on port 3000:
-   yarn start
+   $ yarn start
    ```
 
 4. Automated Testing via [StoryShots](https://www.npmjs.com/package/@storybook/addon-storyshots):
 
+   Install the package and its types:
+
    ```shell
-   yarn add -D @storybook/addon-storyshots
+   $ yarn add -D @storybook/addon-storyshots @types/storybook__addon-storyshots
    ```
 
-   Then create an `src/storybook.test.js` file with the following in it:
+   Create a `src/storybook.test.js` file and put:
 
    ```js
-   import initStoryshots from '@storybook/addon-storyshots';
+   import initStoryshots from "@storybook/addon-storyshots";
    initStoryshots();
-   ```
-
-   For TypeScript, install corresponding type:
-
-   ```shell
-   yarn add -D @types/storybook__addon-storyshots
    ```
 
 5. Configure the App for Jest (Component Story Format (CSF) version):
@@ -63,31 +58,32 @@ This repo contains the base architecture of the project, while further developme
 
    ```js
    // .storybook/config.js
-   import { configure } from '@storybook/react';
 
-   const req = require.context('../src/components', true, /\.stories\.js$/); // <- import all the stories at once
+   import { configure } from "@storybook/react";
+
+   const req = require.context("../src/components", true, /\.stories\.js$/); // <- import all the stories at once
    configure(req, module);
    ```
 
    The above works only during the build with Webpack, polyfill this to work with Jest by first installing Macro (for CRA v2+):
 
    ```shell
-   yarn add -D require-context.macro
+   $ yarn add -D require-context.macro
    ```
 
-   Import the Macro and run it in place of `require.context`:
+   In the same file, import the Macro and run it in place of `require.context`:
 
    ```js
-   import requireContext from 'require-context.macro';
+   import requireContext from "require-context.macro";
 
    // const req = require.context('../src/components', true, /\.stories\.js$/); <-- replaced
-   const req = requireContext('../src/components', true, /\.stories\.js$/);
+   const req = requireContext("../src/components", true, /\.stories\.js$/);
    ```
 
-   Finally, configure Jest for React since StoryShots is dependent on `react-test-renderer` , but doesn't install it:
+   StoryShots is dependent on `react-test-renderer`:
 
    ```shell
-   yarn add -D react-test-renderer
+   $ yarn add -D react-test-renderer
    ```
 
 6. Setting Up Addons - [Knobs](https://github.com/storybookjs/storybook/tree/master/addons/knobs)
@@ -95,50 +91,48 @@ This repo contains the base architecture of the project, while further developme
    Install Addon Knobs:
 
    ```shell
-   yarn add @storybook/addon-knobs
+   $ yarn add @storybook/addon-knobs
    ```
 
    Register Knobs in your `.storybook/addons.js` file:
 
    ```js
-   import '@storybook/addon-actions/register';
-   import '@storybook/addon-knobs/register';
-   import '@storybook/addon-links/register';
+   import "@storybook/addon-actions/register";
+   import "@storybook/addon-knobs/register";
+   import "@storybook/addon-links/register";
    ```
 
    Usage:
 
    ```js
-   import { withKnobs, text } from '@storybook/addon-knobs/react';
-   import Button from './Button';
+   import { withKnobs, text } from "@storybook/addon-knobs/react";
+   import Button from "./Button";
 
    export default {
-     title: 'Button',
+     title: "Button",
      component: Button,
-     decorators: [withKnobs],
+     decorators: [withKnobs]
    };
 
-   export const Default = () => <Button>{text('children', 'Simple Button')}</Button>;
+   export const Default = () => (
+     <Button>{text("children", "Simple Button")}</Button>
+   );
    ```
-
-   ### More AddOns
-
-   `@storybook/addon-a11y`
 
 7. Finishing up TypeScript Setup
 
-   Add [custom Webpack config](https://storybook.js.org/docs/configurations/custom-webpack-config/#full-control-mode--default) by creating `.storybook/webpack.config.js` file with the following in it:
+   Add [custom Webpack config](https://storybook.js.org/docs/configurations/custom-webpack-config/#full-control-mode--default) by creating `.storybook/webpack.config.js` file and put:
 
    ```js
    module.exports = ({ config, mode }) => {
      config.module.rules.push({
        test: /\.(ts|tsx)$/,
-       loader: require.resolve('babel-loader'),
+       loader: require.resolve("babel-loader"),
        options: {
-         presets: [['react-app', { flow: false, typescript: true }]],
-       },
+         presets: [["react-app", { flow: false, typescript: true }]]
+       }
      });
-     config.resolve.extensions.push('.ts', '.tsx');
+     config.resolve.extensions.push(".ts", ".tsx");
      return config;
    };
    ```
@@ -146,7 +140,7 @@ This repo contains the base architecture of the project, while further developme
    Make sure to add `babel-loader`:
 
    ```shell
-   yarn add -D babel-loader
+   $ yarn add -D babel-loader
    ```
 
    Update extensions accordingly (from `.js` to `.ts|tsx`):
@@ -163,10 +157,10 @@ This repo contains the base architecture of the project, while further developme
 
 ```js
 // BEFORE:
-import { withKnobs, object } from '@storybook/addon-knobs/react';
+import { withKnobs, object } from "@storybook/addon-knobs/react";
 
 // AFTER:
-import { withKnobs, object } from '@storybook/addon-knobs';
+import { withKnobs, object } from "@storybook/addon-knobs";
 ```
 
 #### Styled System Issue(s)
@@ -175,14 +169,14 @@ import { withKnobs, object } from '@storybook/addon-knobs';
 
 ```js
 // FIX 1: Set styled component type to `any`:
-const Button: any = styled('button') < ButtonProps > ``;
+const Button: any = styled("button") < ButtonProps > ``;
 
 // Fix 2: Define custom prop `textColor` in place of `color`:
 const textColor = system({
   textColor: {
-    property: 'color', // <-- CSS property
-    scale: 'colors', // <-- key reference in the `theme` object
-  },
+    property: "color", // <-- CSS property
+    scale: "colors" // <-- key reference in the `theme` object
+  }
 });
 ```
 
@@ -190,22 +184,27 @@ For Fix 2, make sure to do the same thing for prop `bg|backgroundColor` since th
 
 ---
 
-## 📄 `DocsPage` Setup
+## 📄 [DocsPage](https://github.com/storybookjs/storybook/tree/next/addons/docs) Setup
 
-1. Install the dependency:
+1. Install DocsPage:
    ```shell
-   yarn add -D @storybook/addon-docs
+   $ yarn add -D @storybook/addon-docs
    ```
-2. Create the file `.storybook/presets.js`, with the following in it:
+2. Create the file `.storybook/presets.js` and put:
    ```js
-   module.exports = ['@storybook/addon-docs/react/preset'];
+   module.exports = ["@storybook/addon-docs/react/preset"];
    ```
 3. Install `react-docgen-typescript-loader`:
+
    ```shell
-   yarn add -D react-docgen-typescript-loader
+   $ yarn add -D react-docgen-typescript-loader
    ```
+
    May need to specify the `tsconfig` for the loader in case [props are not displaying](https://github.com/strothj/react-docgen-typescript-loader/issues/10#issuecomment-425688601):
+
    ```js
+   // webpack.config.js
+
    config.module.rules.push({
      ...
      use: [
@@ -229,43 +228,48 @@ Storybook tests UI visually via an add-on called `storyshot-puppeteer`:
 
 ### Quick Setup
 
-Install `storyshot-puppeteer` with:
+1. Install `storyshot-puppeteer`:
 
-```shell
-yarn add D @storybook/addon-storyshots-puppeteer
-```
+   ```shell
+   $  yarn add D @storybook/addon-storyshots-puppeteer
+   ```
 
-Update the test file `storybook.test.ts` to override the test comparison with `imageSnapshot` from the `puppeteer` add-on:
+2. Update the test file `storybook.test.ts` to override the test comparison with `imageSnapshot` from the `puppeteer` add-on:
 
-```js
-// storybook.test.ts
-import initStoryshots from '@storybook/addon-storyshots';
-import { imageSnapshot } from '@storybook/addon-storyshots-puppeteer';
+   ```js
+   // storybook.test.ts
 
-initStoryshots({
-  test: imageSnapshot({ storybookUrl: 'http://localhost:9009/' }),
-});
-```
+   import initStoryshots from "@storybook/addon-storyshots";
+   import { imageSnapshot } from "@storybook/addon-storyshots-puppeteer";
 
-Note that the tests now depend on having an instance of Storybook running, so make sure Storybook server is up and running before running the tests.
+   initStoryshots({
+     test: imageSnapshot({ storybookUrl: "http://localhost:9009/" })
+   });
+   ```
+
+   Note that the tests now depend on having an instance of Storybook running, so make sure Storybook server is up and running before running the tests.
 
 ### Running on CI
 
-Running two terminals (one for Storybook, another one for Testing) at the same time on CI environment is made possible by `start-server-and-test`:
+Running two terminals (one for Storybook, another one for Testing) at the same time on CI environment is made possible by `start-server-and-test`.
 
-```shell
-yarn add start-server-and-test
-```
+1. Install it:
 
-Then add the below corresponding script in `package.json` file:
+   ```shell
+   $ yarn add start-server-and-test
+   ```
 
-```json
-"scripts": {
-  "test": "react-scripts test --coverage",
-  "storybook": "start-storybook -p 9009 -s public",
-  "ci:test": "start-test storybook 9009 test",
-}
-```
+2. Sample script:
+
+   ```json
+   // package.json
+
+   "scripts": {
+     "test": "react-scripts test --coverage",
+     "storybook": "start-storybook -p 9009 -s public",
+     "ci:test": "start-test storybook 9009 test",
+   }
+   ```
 
 ---
 
@@ -273,36 +277,36 @@ Then add the below corresponding script in `package.json` file:
 
 ### [Collecting Jest Data](https://www.viget.com/articles/using-junit-on-circleci-2-0-with-jest-and-eslint/) via [Junit](https://github.com/jest-community/jest-junit) (CRA version)
 
-Install `jest-junit` with:
+1. Install `jest-junit`:
+
+   ```shell
+   $ yarn add -D jest-junit
+   ```
+
+2. Tell Junit to save the report output to a directory of your choice (`test-reports` in my case):
+
+   ```json
+   // package.json
+
+   "jest-junit": {
+     "outputDirectory": "test-reports"
+   }
+   ```
+
+#### Sample command line:
 
 ```shell
-yarn add -D jest-junit
-```
-
-Tell Junit to save the report output to a directory of your choice (`test-reports` in my case):
-
-```json
-// package.json
-
-"jest-junit": {
-  "outputDirectory": "test-reports"
-}
-```
-
-Sample command line:
-
-```shell
-react-scripts test --coverage --ci --runInBand --reporters=default --reporters=jest-junit
+$ react-scripts test --coverage --ci --runInBand --reporters=default --reporters=jest-junit
 ```
 
 - `--runInBand` - force Jest to use only the virtualized build environment within the virtual machine
 - `--ci` - improves the behavior of certain Jest operations like snapshot testing during continuous integration
 - `--reporters=default --reporters=jest-junit` - tell Jest to generate a Junit report
 
-More CircleCI required config:
+#### More CircleCI required config:
 
 ```yml
-## .circleci/config.yml
+# .circleci/config.yml
 
 - store_artifacts:
     path: test-reports/ # upload the test result folder as an artifact
@@ -314,6 +318,115 @@ More CircleCI required config:
 
 ---
 
-## TypeScript ESLint Setup
+## [TypeScript ESLint](https://github.com/typescript-eslint/typescript-eslint) Setup
 
-🍔TODO
+1. Install the required dependencies:
+
+   ```shell
+   $ yarn add -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+   ```
+
+2. Create the `.eslintrc` file and put:
+
+   ```json
+   {
+     "parser": "@typescript-eslint/parser",
+     "plugins": ["@typescript-eslint"]
+   }
+   ```
+
+   In the same file, add the following recommended rules:
+
+   ```json
+   // .eslintrc
+
+   {
+     ...
+     // Add this to avoid runtime error
+     "parserOptions": {
+       "project": "./tsconfig.json"
+     },
+     "extends": [
+       // Rules which recommended for all projects by the ESLint Team
+       "eslint:recommended",
+       // Make all eslint rules compatible with TS
+       "plugin:@typescript-eslint/eslint-recommended",
+       "plugin:@typescript-eslint/recommended",
+       // for type-checking to work properly with highly-valuable rules
+       "plugin:@typescript-eslint/recommended-requiring-type-checking"
+     ]
+   }
+   ```
+
+### [Usage with Airbnb](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb)
+
+```shell
+$ npx install-peerdeps --dev eslint-config-airbnb
+```
+
+```json
+// .eslintrc
+
+{
+  ...
+  "extends": [
+    // ESLint rules, including ES6+ and React
+    "airbnb",
+    // Enable the linting rules for React hooks
+    "airbnb/hooks",
+    ...
+  ],
+}
+```
+
+### [Usage with Prettier](https://github.com/prettier/eslint-config-prettier)
+
+```shell
+$ yarn add -D eslint-config-prettier
+```
+
+```json
+// .eslintrc
+
+{
+  ...
+  "extends": [
+    ...
+    // Disable above code formatting related rules
+    "prettier",
+    // Required if a config uses a plugin to avoid conflict with Prettier
+    "prettier/@typescript-eslint",
+    "prettier/react"
+  ],
+}
+```
+
+In case of Prettier not configured in a workspace, add `eslint-plugin-prettier` to enforce the formatter.
+
+```shell
+$ yarn add -D prettier eslint-plugin-prettier
+```
+
+```json
+// .eslintrc
+
+{
+  ...
+  "plugins": [..., "prettier"],
+  "extends": [
+    "prettier/react"
+    "plugin:prettier/recommended"
+  ],
+  "prettier/prettier": [
+      "error",
+      {
+        "no-var-keyword": true,
+        "printWidth": 100,
+        "semi": true,
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "tabWidth": 2
+      }
+    ]
+}
+```

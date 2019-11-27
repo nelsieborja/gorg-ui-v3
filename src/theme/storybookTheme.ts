@@ -10,6 +10,6 @@ export default {
     barSelectedColor: '#00a6fe',
 
     brandTitle: '🦋 Gorg UI',
-    brandUrl: ''
-  })
+    brandUrl: '',
+  }),
 };

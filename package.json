@@ -1,6 +1,7 @@
 {
   "name": "gorg-ui-v3",
   "version": "0.1.0",
+  "license": "MIT",
   "dependencies": {
     "emotion-normalize": "^10.1.0",
     "polished": "^3.4.2",
@@ -17,10 +18,11 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
+    "lint": "eslint --ext=js,ts,tsx src",
     "ci:test:puppeteer": "start-test 'start-storybook -p 9009 -s public' 9009 'react-scripts test --coverage --ci --runInBand --reporters=default --reporters=jest-junit'",
     "ci:test": "yarn run test --coverage --ci --runInBand --reporters=default --reporters=jest-junit",
-    "ci:build": "yarn run build-storybook",
-    "lint": "eslint --ext=js,ts,tsx src"
+    "ci:lint": "yarn run lint --fix -f junit -o junit-lint-reports/lint-reports.xml",
+    "ci:build": "yarn run build-storybook"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -38,7 +40,8 @@
     ]
   },
   "jest-junit": {
-    "outputDirectory": "test-reports"
+    "outputDirectory": "junit-test-reports",
+    "outputName": "test-reports.xml"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "^5.2.6",
@@ -65,12 +68,13 @@
     "eslint-config-airbnb": "18.0.1",
     "eslint-config-prettier": "^6.7.0",
     "eslint-config-react-app": "^5.0.2",
-    "eslint-plugin-flowtype": "^4.4.1",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
     "jest-junit": "^9.0.0",
+    "prettier": "^1.19.1",
     "react-docgen-typescript-loader": "^3.4.0",
     "react-is": "^16.12.0",
     "react-test-renderer": "^16.12.0",

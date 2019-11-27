@@ -15,17 +15,22 @@
     "airbnb",
     // Enable the linting rules for React hooks
     "airbnb/hooks",
+
     // Make all eslint core rules compatible with TypeScript
-    "eslint:recommended",
+    "eslint:recommended", // Rules which recommended for all projects by the ESLint Team
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     // Some highly valuable rules simply require type-checking in order to be implemented correctly
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
+
     // Disable above code formatting related rules
     "prettier",
-    "prettier/@typescript-eslint"
+    // Required if a config uses a plugin
+    "prettier/@typescript-eslint",
+    "prettier/react",
+    "plugin:prettier/recommended"
   ],
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "prettier"],
   "settings": {
     // Make CRA absolure import works with ESLint
     "import/resolver": {
@@ -48,6 +53,17 @@
     "import/no-extraneous-dependencies": 0,
     "react/jsx-props-no-spreading": 0,
     // [FIX] 'children' is missing in props validation
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "prettier/prettier": [
+      "error",
+      {
+        "no-var-keyword": true,
+        "printWidth": 100,
+        "semi": true,
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "tabWidth": 2
+      }
+    ]
   }
 }

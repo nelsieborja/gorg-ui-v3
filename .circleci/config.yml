@@ -64,7 +64,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: mkdir test-reports
+      - run: mkdir junit-test-reports
       - run:
           name: Run Test + Coverage
           command: yarn run ci:test
@@ -74,44 +74,19 @@ jobs:
           root: .
           paths:
             - coverage
-            - test-reports
+            - junit-test-reports
 
-  storyshots-puppeteer:
-    <<: *defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: mkdir test-reports
-      - run: yarn run ci:test:puppeteer
-      # - run:
-      #     name: Download Selenium
-      #     command: |
-      #       curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
-      # - run:
-      #     name: Start Selenium
-      #     command: |
-      #       java -jar selenium-server-standalone-3.5.3.jar -log test-reports/selenium.log
-      #     background: true
-      - store_test_results:
-          path: src/__image_snapshots__/
-      - persist_to_workspace:
-          root: .
-          paths:
-            - coverage
-            - test-reports
-
-  snapshots:
+  test-report:
     <<: *defaults
     steps:
       - checkout
       - attach_workspace:
           at: .
       - store_artifacts:
-          path: test-reports/
-          destination: test-reports
+          path: junit-test-reports/
+          destination: junit-test-reports
       - store_test_results:
-          path: test-reports/
+          path: junit-test-reports/
 
   coverage:
     <<: *defaults
@@ -126,32 +101,82 @@ jobs:
           file: coverage/coverage-final.json
           token: 9cfb46e1-c622-4ee2-a089-295bcb653ae0
 
+  lint:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: mkdir junit-lint-reports
+      - run:
+          name: Run Lint + Autofix
+          command: yarn run ci:lint
+      - persist_to_workspace:
+          root: .
+          paths:
+            - junit-lint-reports
+
+  lint-report:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - store_artifacts:
+          path: junit-lint-reports/
+          destination: junit-lint-reports
+      - store_test_results:
+          path: junit-lint-reports/
+
 workflows:
   version: 2
-  build_and_test:
+  lint-test-build:
     jobs:
       - dependencies
+      - lint:
+          requires:
+            - dependencies
+      - lint-report:
+          requires:
+            - lint
+
       - test:
           requires:
             - dependencies
-      - build:
+      - test-report:
           requires:
             - test
       - coverage:
           requires:
             - test
-      - snapshots:
+
+      - build:
           requires:
+            - dependencies
+            - lint
             - test
-  # puppeteer_test:
-  #   jobs:
-  #     - dependencies
-  #     - storyshots-puppeteer:
-  #         requires:
-  #           - dependencies
-  #     - coverage:
-  #         requires:
-  #           - storyshots-puppeteer
-  #     - snapshots:
-  #         requires:
-  #           - storyshots-puppeteer
+      # - deploy [TODO]
+  # storyshots-puppeteer:
+  #   <<: *defaults
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: .
+  #     - run: mkdir junit-test-reports
+  #     - run: yarn run ci:test:puppeteer
+  #     # - run:
+  #     #     name: Download Selenium
+  #     #     command: |
+  #     #       curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
+  #     # - run:
+  #     #     name: Start Selenium
+  #     #     command: |
+  #     #       java -jar selenium-server-standalone-3.5.3.jar -log junit-test-reports/selenium.log
+  #     #     background: true
+  #     - store_test_results:
+  #         path: src/__image_snapshots__/
+  #     - persist_to_workspace:
+  #         root: .
+  #         paths:
+  #           - coverage
+  #           - junit-test-reports
