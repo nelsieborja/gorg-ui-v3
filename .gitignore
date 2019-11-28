@@ -7,8 +7,7 @@
 
 # testing
 /coverage
-/junit-test-reports
-/junit-lint-reports
+/junit-reports
 
 # production
 /build

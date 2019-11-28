@@ -14,14 +14,17 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
+    "test": "react-scripts test",
+    "test:coverage": "yarn run test --coverage",
     "lint": "eslint --ext=js,ts,tsx src",
+    "lint:fix": "yarn run lint --fix",
+    "test:all": "CI=true yarn run test && yarn run lint",
     "ci:test:puppeteer": "start-test 'start-storybook -p 9009 -s public' 9009 'react-scripts test --coverage --ci --runInBand --reporters=default --reporters=jest-junit'",
-    "ci:test": "yarn run test --coverage --ci --runInBand --reporters=default --reporters=jest-junit",
-    "ci:lint": "yarn run lint --fix -f junit -o junit-lint-reports/lint-reports.xml",
+    "ci:test": "CI=true yarn run test:coverage --reporters=default --reporters=jest-junit",
+    "ci:lint": "yarn run lint:fix -f junit -o junit-reports/lint-reports.xml",
     "ci:build": "yarn run build-storybook"
   },
   "eslintConfig": {
@@ -40,7 +43,7 @@
     ]
   },
   "jest-junit": {
-    "outputDirectory": "junit-test-reports",
+    "outputDirectory": "junit-reports",
     "outputName": "test-reports.xml"
   },
   "devDependencies": {
@@ -73,8 +76,11 @@
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
+    "husky": "^3.1.0",
     "jest-junit": "^9.0.0",
-    "prettier": "^1.19.1",
+    "lint-staged": "^9.5.0",
+    "prettier": "1.19.1",
+    "pretty-quick": "^2.0.1",
     "react-docgen-typescript-loader": "^3.4.0",
     "react-is": "^16.12.0",
     "react-test-renderer": "^16.12.0",

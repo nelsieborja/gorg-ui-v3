@@ -28,6 +28,8 @@ jobs:
           name: Install Dependencies
           command: yarn install --ignore-engines
 
+      - run: mkdir junit-reports
+
       - save_cache:
           name: Save Yarn Package Cache
           key: yarn-packages-{{ checksum "yarn.lock" }}
@@ -38,6 +40,7 @@ jobs:
           root: .
           paths:
             - node_modules
+            - junit-reports
 
   build: # runs not using Workflows must have a `build` job as entry point
     <<: *defaults
@@ -64,7 +67,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: mkdir junit-test-reports
       - run:
           name: Run Test + Coverage
           command: yarn run ci:test
@@ -74,19 +76,7 @@ jobs:
           root: .
           paths:
             - coverage
-            - junit-test-reports
-
-  test-report:
-    <<: *defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - store_artifacts:
-          path: junit-test-reports/
-          destination: junit-test-reports
-      - store_test_results:
-          path: junit-test-reports/
+            - junit-reports
 
   coverage:
     <<: *defaults
@@ -107,26 +97,25 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: mkdir junit-lint-reports
       - run:
           name: Run Lint + Autofix
           command: yarn run ci:lint
       - persist_to_workspace:
           root: .
           paths:
-            - junit-lint-reports
+            - junit-reports
 
-  lint-report:
+  generate-reports:
     <<: *defaults
     steps:
       - checkout
       - attach_workspace:
           at: .
       - store_artifacts:
-          path: junit-lint-reports/
-          destination: junit-lint-reports
+          path: junit-reports/
+          destination: junit-reports
       - store_test_results:
-          path: junit-lint-reports/
+          path: junit-reports/
 
 workflows:
   version: 2
@@ -136,18 +125,16 @@ workflows:
       - lint:
           requires:
             - dependencies
-      - lint-report:
-          requires:
-            - lint
-
       - test:
           requires:
             - dependencies
-      - test-report:
-          requires:
-            - test
       - coverage:
           requires:
+            - test
+
+      - generate-reports:
+          requires:
+            - lint
             - test
 
       - build:
@@ -162,7 +149,7 @@ workflows:
   #     - checkout
   #     - attach_workspace:
   #         at: .
-  #     - run: mkdir junit-test-reports
+  #     - run: mkdir junit-reports
   #     - run: yarn run ci:test:puppeteer
   #     # - run:
   #     #     name: Download Selenium
@@ -171,7 +158,7 @@ workflows:
   #     # - run:
   #     #     name: Start Selenium
   #     #     command: |
-  #     #       java -jar selenium-server-standalone-3.5.3.jar -log junit-test-reports/selenium.log
+  #     #       java -jar selenium-server-standalone-3.5.3.jar -log junit-reports/selenium.log
   #     #     background: true
   #     - store_test_results:
   #         path: src/__image_snapshots__/
@@ -179,4 +166,4 @@ workflows:
   #         root: .
   #         paths:
   #           - coverage
-  #           - junit-test-reports
+  #           - junit-reports
