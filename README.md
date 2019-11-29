@@ -1,4 +1,4 @@
-# 🦋 Gorg UI v3 [![CircleCI](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master.svg?style=svg)](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master) [![codecov](https://codecov.io/gh/nelsieborja/gorg-ui-v3/branch/master/graph/badge.svg)](https://codecov.io/gh/nelsieborja/gorg-ui-v3) [![Netlify Status](https://api.netlify.com/api/v1/badges/d088e964-3c0e-41dc-acd3-44730b45593e/deploy-status)](https://app.netlify.com/sites/gorg-ui-v3/deploys)
+# 🦋 Gorg UI v3 [![CircleCI](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master.svg?style=shield)](https://circleci.com/gh/nelsieborja/gorg-ui-v3/tree/master) [![codecov](https://codecov.io/gh/nelsieborja/gorg-ui-v3/branch/master/graph/badge.svg)](https://codecov.io/gh/nelsieborja/gorg-ui-v3) [![Netlify Status](https://api.netlify.com/api/v1/badges/d088e964-3c0e-41dc-acd3-44730b45593e/deploy-status)](https://app.netlify.com/sites/gorg-ui-v3/deploys)
 
 This repo contains the base architecture of the project, while further development was moved to a private monorepo (for now). You might also like to checkout the [first](https://github.com/nelsieborja/gorg-ui) ever version of the project for prior updates.
 
@@ -9,6 +9,7 @@ This repo contains the base architecture of the project, while further developme
 - [x] ~~Structural Testing~~ [Automated Visual Testing](https://github.com/nelsieborja/gorg-ui-v3#-automated-visual-testing)
 - [x] [CircleCI Setup](https://github.com/nelsieborja/gorg-ui-v3#circleci-setup)
 - [x] [TypeScript ESLint Setup](https://github.com/nelsieborja/gorg-ui-v3#typescript-eslint-setup)
+- [x] [Git Hooks](https://github.com/nelsieborja/gorg-ui-v3#git-hooks)
 
 ## ⚙️ Installation
 
@@ -261,7 +262,7 @@ Running two terminals (one for Storybook, another one for Testing) at the same t
 
 2. Sample script:
 
-   ```json
+   ```js
    // package.json
 
    "scripts": {
@@ -285,7 +286,7 @@ Running two terminals (one for Storybook, another one for Testing) at the same t
 
 2. Tell Junit to save the report output to a directory of your choice (`test-reports` in my case):
 
-   ```json
+   ```js
    // package.json
 
    "jest-junit": {
@@ -293,14 +294,13 @@ Running two terminals (one for Storybook, another one for Testing) at the same t
    }
    ```
 
-#### Sample command line:
+#### Sample command line (CRA version):
 
 ```shell
-$ react-scripts test --coverage --ci --runInBand --reporters=default --reporters=jest-junit
+$ CI=true yarn run test:coverage -i --reporters=default --reporters=jest-junit
 ```
-
-- `--runInBand` - force Jest to use only the virtualized build environment within the virtual machine
-- `--ci` - improves the behavior of certain Jest operations like snapshot testing during continuous integration
+- `CI=true` - [force Jest to run tests once and finish the process](https://create-react-app.dev/docs/running-tests/#continuous-integration)
+- `-i` - force Jest to use only the virtualized build environment within the virtual machine
 - `--reporters=default --reporters=jest-junit` - tell Jest to generate a Junit report
 
 #### More CircleCI required config:
@@ -328,7 +328,7 @@ $ react-scripts test --coverage --ci --runInBand --reporters=default --reporters
 
 2. Create the `.eslintrc` file and put:
 
-   ```json
+   ```js
    {
      "parser": "@typescript-eslint/parser",
      "plugins": ["@typescript-eslint"]
@@ -337,7 +337,7 @@ $ react-scripts test --coverage --ci --runInBand --reporters=default --reporters
 
    In the same file, add the following recommended rules:
 
-   ```json
+   ```js
    // .eslintrc
 
    {
@@ -364,7 +364,7 @@ $ react-scripts test --coverage --ci --runInBand --reporters=default --reporters
 $ npx install-peerdeps --dev eslint-config-airbnb
 ```
 
-```json
+```js
 // .eslintrc
 
 {
@@ -385,7 +385,7 @@ $ npx install-peerdeps --dev eslint-config-airbnb
 $ yarn add -D eslint-config-prettier
 ```
 
-```json
+```js
 // .eslintrc
 
 {
@@ -407,7 +407,7 @@ In case of Prettier not configured in a workspace, add `eslint-plugin-prettier` 
 $ yarn add -D prettier eslint-plugin-prettier
 ```
 
-```json
+```js
 // .eslintrc
 
 {
@@ -430,3 +430,35 @@ $ yarn add -D prettier eslint-plugin-prettier
     ]
 }
 ```
+
+---
+
+### Git Hooks
+
+1. Install the required dependencies:
+    ``` shell
+    $ yarn add -D husky lint-staged prettier pretty-quick
+    ```
+
+2. Sample config files:
+    ```js
+    // .huskyrc
+
+    {
+      "hooks": {
+        "pre-commit": "pretty-quick --staged --verbose && lint-staged",
+        "pre-push": "yarn run test:all"
+      }
+    }
+    ```
+
+    ```js
+    // .lintstagedrc
+
+    {
+      "src/**/*.{js,ts,tsx}": [
+        "eslint --fix",
+        "git add"
+      ]
+    }
+    ```
