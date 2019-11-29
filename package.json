@@ -23,9 +23,9 @@
     "lint:fix": "yarn run lint --fix",
     "test:all": "CI=true yarn run test && yarn run lint",
     "ci:test:puppeteer": "start-test 'start-storybook -p 9009 -s public' 9009 'react-scripts test --coverage --ci --runInBand --reporters=default --reporters=jest-junit'",
-    "ci:test": "CI=true yarn run test:coverage --reporters=default --reporters=jest-junit",
-    "ci:lint": "yarn run lint:fix -f junit -o junit-reports/lint-reports.xml",
-    "ci:build": "yarn run build-storybook"
+    "ci:test": "CI=true yarn run test:coverage -i --reporters=default --reporters=jest-junit",
+    "ci:lint": "CI=true yarn run lint:fix -f junit -o junit-reports/lint-reports.xml",
+    "ci:build": "CI=true yarn run build-storybook"
   },
   "eslintConfig": {
     "extends": "react-app"
