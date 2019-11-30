@@ -1,18 +1,72 @@
-defaults: &defaults
+# Checkout Workspace
+attach_workspace: &attach_workspace
+  attach_workspace:
+    at: .
+
+
+# Build environments
+deploy_environment: &deploy_environment
+  working_directory: ~/repo
+  machine: true
+
+test_environment: &test_environment
   working_directory: ~/repo
   docker:
     - image: circleci/node:13.0-browsers
 
-version: 2.1 # use CircleCI version 2.1
 
+# Requirement groups
+deps: &deps
+  - "Dependencies"
+deps_and_lint_and_test: &deps_and_lint_and_test
+  - "Dependencies"
+  - "Lint"
+  - "Test"
+test: &test
+  - "Test"
+lint_and_test: &lint_and_test
+  - "Lint"
+  - "Test"
+deps_and_build: &deps_and_build
+  - "Dependencies"
+  - "Build"
+
+
+version: 2.1 # use CircleCI version 2.1
 orbs:
   codecov: codecov/codecov@1.0.5
+workflows:
+  version: 2
+  master:
+    jobs:
+      - "Dependencies"
+      - "Deploy":
+          requires: *deps_and_build
+      - "Lint":
+          requires: *deps
+      - "Test":
+          requires: *deps
+      - "Coverage":
+          requires: *test
+      - "Generate Reports":
+          requires: *lint_and_test
+      - "Build":
+          requires: *deps_and_lint_and_test
 
 jobs:
-  dependencies: # runs not using Workflows must have a `build` job as entry point
-    <<: *defaults
+  "Deploy":
+    <<: *deploy_environment
     steps:
       - checkout
+      - run:
+          name: Netlify Deploy
+          command: curl -X POST -d {} ${netlify_build_url}
+
+  "Dependencies":
+    <<: *test_environment
+    steps:
+      - checkout
+      - *attach_workspace
       # Download and cache dependencies
       - restore_cache:
           name: Restore Yarn Package Cache
@@ -23,50 +77,41 @@ jobs:
             # embeds "yarn.lock" into the key templace via {{ checksum "yarn.lock" }}
             - yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
             - yarn-packages-
-
       - run:
           name: Install Dependencies
           command: yarn install --ignore-engines
-
-      - run: mkdir junit-reports
-
+      - run:
+          name: Create Test Reports Folder
+          command: mkdir junit-reports
       - save_cache:
           name: Save Yarn Package Cache
           key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn # cache path
-
       - persist_to_workspace:
           root: .
           paths:
             - node_modules
             - junit-reports
 
-  build: # runs not using Workflows must have a `build` job as entry point
-    <<: *defaults
+  "Lint":
+    <<: *test_environment
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - *attach_workspace
       - run:
-          name: Build Gorg UI
-          command: yarn run ci:build
-      # upload the build folder as an artifact
-      - store_artifacts:
-          path: public/
-          destination: public
-
+          name: Run Lint + Autofix
+          command: yarn run ci:lint
       - persist_to_workspace:
           root: .
           paths:
-            - public
+            - junit-reports
 
-  test:
-    <<: *defaults
+  "Test":
+    <<: *test_environment
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - *attach_workspace
       - run:
           name: Run Test + Coverage
           command: yarn run ci:test
@@ -78,92 +123,42 @@ jobs:
             - coverage
             - junit-reports
 
-  coverage:
-    <<: *defaults
+  "Coverage":
+    <<: *test_environment
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - *attach_workspace
       - store_artifacts:
           path: coverage/
           destination: coverage
       - codecov/upload:
           file: coverage/coverage-final.json
-          token: 9cfb46e1-c622-4ee2-a089-295bcb653ae0
+          token: ${codecov_token}
 
-  lint:
-    <<: *defaults
+  "Generate Reports":
+    <<: *test_environment
     steps:
       - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Run Lint + Autofix
-          command: yarn run ci:lint
-      - persist_to_workspace:
-          root: .
-          paths:
-            - junit-reports
-
-  generate-reports:
-    <<: *defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
+      - *attach_workspace
       - store_artifacts:
           path: junit-reports/
           destination: junit-reports
       - store_test_results:
           path: junit-reports/
 
-workflows:
-  version: 2
-  lint-test-build:
-    jobs:
-      - dependencies
-      - lint:
-          requires:
-            - dependencies
-      - test:
-          requires:
-            - dependencies
-      - coverage:
-          requires:
-            - test
-
-      - generate-reports:
-          requires:
-            - lint
-            - test
-
-      - build:
-          requires:
-            - dependencies
-            - lint
-            - test
-      # - deploy [TODO]
-  # storyshots-puppeteer:
-  #   <<: *defaults
-  #   steps:
-  #     - checkout
-  #     - attach_workspace:
-  #         at: .
-  #     - run: mkdir junit-reports
-  #     - run: yarn run ci:test:puppeteer
-  #     # - run:
-  #     #     name: Download Selenium
-  #     #     command: |
-  #     #       curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
-  #     # - run:
-  #     #     name: Start Selenium
-  #     #     command: |
-  #     #       java -jar selenium-server-standalone-3.5.3.jar -log junit-reports/selenium.log
-  #     #     background: true
-  #     - store_test_results:
-  #         path: src/__image_snapshots__/
-  #     - persist_to_workspace:
-  #         root: .
-  #         paths:
-  #           - coverage
-  #           - junit-reports
+  "Build":
+    <<: *test_environment
+    steps:
+      - checkout
+      - *attach_workspace
+      - run:
+          name: Build Gorg UI
+          command: yarn run ci:build
+      # upload the build folder as an artifact
+      - store_artifacts:
+          path: public/
+          destination: public
+      - persist_to_workspace:
+          root: .
+          paths:
+            - public
